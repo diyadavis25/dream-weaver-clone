@@ -9,7 +9,6 @@ const TreasureHunt = () => {
   const [teamName, setTeamName] = useState('');
   const [code, setCode] = useState(['', '', '', '', '']);
   const [gameState, setGameState] = useState<'input' | 'success' | 'failure'>('input');
-  const [activeDigit, setActiveDigit] = useState<string | null>(null);
   const CORRECT_CODE = '01964';
 
   const handleCodeChange = (index: number, value: string) => {
@@ -18,25 +17,11 @@ const TreasureHunt = () => {
       newCode[index] = value;
       setCode(newCode);
       
-      // Show active digit feedback
-      if (value) {
-        setActiveDigit(value);
-        setTimeout(() => setActiveDigit(null), 300);
-      }
-      
       // Auto-focus next input
       if (value && index < 4) {
         const nextInput = document.getElementById(`code-${index + 1}`);
         nextInput?.focus();
       }
-    }
-  };
-
-  const handleKeyboardClick = (digit: string) => {
-    // Find the first empty input
-    const emptyIndex = code.findIndex(c => c === '');
-    if (emptyIndex !== -1) {
-      handleCodeChange(emptyIndex, digit);
     }
   };
 
@@ -58,8 +43,6 @@ const TreasureHunt = () => {
   const tryAgain = () => {
     setGameState('input');
     setCode(['', '', '', '', '']);
-    setActiveDigit(null);
-    setActiveDigit(null);
   };
 
   return (
@@ -117,43 +100,6 @@ const TreasureHunt = () => {
                   ))}
                 </div>
                 <p className="text-sm text-gray-600">Enter the 5-digit code to unlock the treasure</p>
-              </div>
-
-              {/* Virtual Keyboard */}
-              <div className="space-y-3">
-                <p className="text-xs text-gray-500">Tap the numbers below:</p>
-                <div className="grid grid-cols-5 gap-2 max-w-xs mx-auto">
-                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((digit) => (
-                    <Button
-                      key={digit}
-                      variant="outline"
-                      onClick={() => handleKeyboardClick(digit.toString())}
-                      className={`w-12 h-12 text-lg font-bold transition-all duration-200 ${
-                        activeDigit === digit.toString() 
-                          ? 'bg-orange-500 text-white border-orange-500 scale-110' 
-                          : 'hover:bg-orange-100 hover:border-orange-300'
-                      }`}
-                      disabled={code.every(c => c !== '')}
-                    >
-                      {digit}
-                    </Button>
-                  ))}
-                </div>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    const lastFilledIndex = code.map((c, i) => c !== '' ? i : -1).filter(i => i !== -1).pop();
-                    if (lastFilledIndex !== undefined) {
-                      const newCode = [...code];
-                      newCode[lastFilledIndex] = '';
-                      setCode(newCode);
-                    }
-                  }}
-                  className="w-20 h-10 text-sm bg-red-50 hover:bg-red-100 border-red-200"
-                  disabled={code.every(c => c === '')}
-                >
-                  ⌫ Clear
-                </Button>
               </div>
 
               {/* Submit Button */}
